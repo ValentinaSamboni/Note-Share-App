@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { NoteForm } from "@/components/NoteForm";
 import { NoteCard } from "@/components/NoteCard";
@@ -16,12 +15,17 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
   const { notes, addNote, updateNote, deleteNote } = useNotes();
   const [isAddingNote, setIsAddingNote] = useState(false);
   const [editingNote, setEditingNote] = useState<Note | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
 
   const handleNoteSubmit = async (formData: NoteFormData) => {
     if (editingNote) {
@@ -42,9 +46,18 @@ const Index = () => {
 
   return (
     <div className="container mx-auto py-8 px-4">
-      <header className="mb-8">
-        <h1 className="text-3xl font-bold">Note Share</h1>
-        <p className="text-muted-foreground">Create, share, and collaborate on notes</p>
+      <header className="mb-8 flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold">Note Share</h1>
+          <p className="text-muted-foreground">Create, share, and collaborate on notes</p>
+        </div>
+        <div>
+          {!user ? (
+            <Button onClick={() => navigate("/auth")}>Login</Button>
+          ) : (
+            <Button variant="outline" onClick={signOut}>Logout</Button>
+          )}
+        </div>
       </header>
 
       {!isAddingNote && !editingNote && (
