@@ -1,5 +1,4 @@
-# Welcome to your Lovable project
-
+# Note Share App
 ## Project info
 
 **URL**: https://lovable.dev/projects/c489fc81-4e3c-449c-81f5-6c6a34ee8f7e
