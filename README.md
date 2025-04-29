@@ -1,72 +1,147 @@
-# Note Share App
-## Project info
+# 📝 Note‑Share App
 
-**URL**: https://lovable.dev/projects/c489fc81-4e3c-449c-81f5-6c6a34ee8f7e
+A simple yet powerful web application for writing, storing and sharing notes. Built with **Vite + React + TypeScript**, styled with **Tailwind CSS** & **shadcn/ui**, and powered by **Supabase** for authentication, real‑time sync, and Postgres storage.
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## ✨ Features
 
-**Use Lovable**
+| Feature                          | Details                                                                                                      |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| **Create / Edit / Delete notes** | Rich‑text Markdown editor with autosave to local cache & cloud.                                              |
+| **Offline‑first**                | Works without a network connection thanks to localStorage; automatically re‑syncs when you come back online. |
+| **Authentication**               | Email‑link sign‑in via Supabase.                                                                             |
+| **Sharing**                      | Opt‑in share‑by‑link with configurable read/edit permissions.                                                |
+| **Real‑time collaboration**      | See who’s editing and watch changes appear live (Supabase Realtime).                                         |
+| **Search & filter**              | Full‑text search on titles and content.                                                                      |
+| **Dark mode**                    | Respects system preference and offers a toggle.                                                              |
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/c489fc81-4e3c-449c-81f5-6c6a34ee8f7e) and start prompting.
+---
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🏗️ Tech Stack
 
-**Use your preferred IDE**
+- **Frontend:** Vite, React 18, TypeScript 5
+- **UI / Styling:** Tailwind CSS, shadcn/ui, lucide‑react icons
+- **State:** React Context + useReducer (client cache), TanStack Query (remote)
+- **Backend‑as‑a‑Service:** Supabase (Auth, Postgres, Storage, Realtime)
+- **Testing:** Vitest + React Testing Library
+- **Tooling:** pnpm, ESLint, Prettier, Husky, GitHub Actions CI
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+---
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## 📂 Project Structure
 
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```
+├── public/            # Static assets
+├── src/
+│   ├── components/    # Reusable UI pieces (Button, NoteCard …)
+│   ├── features/
+│   │   └── notes/     # Note CRUD hooks, context & pages
+│   ├── integrations/
+│   │   └── supabase/  # Supabase client & helpers
+│   ├── routes/        # Route definitions (React‑Router v6)
+│   ├── App.tsx        # App shell
+│   └── main.tsx       # Entry point
+├── .github/workflows/ # CI definition
+├── .env.example       # Sample env vars
+└── README.md
 ```
 
-**Edit a file directly in GitHub**
+---
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 🚀 Quick Start
 
-**Use GitHub Codespaces**
+### 1. Clone & install
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+```bash
+pnpm install
+```
 
-## What technologies are used for this project?
+### 2. Configure environment variables
 
-This project is built with:
+Copy the template and add your own Supabase project keys:
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+```bash
+cp .env.example .env
+```
 
-## How can I deploy this project?
+```ini
+VITE_SUPABASE_URL=<your‑project‑url>
+VITE_SUPABASE_ANON_KEY=<your‑anon‑public‑key>
+```
 
-Simply open [Lovable](https://lovable.dev/projects/c489fc81-4e3c-449c-81f5-6c6a34ee8f7e) and click on Share -> Publish.
+> **Tip:** Never commit your real keys—`/.env*` is already ignored by Git.
 
-## Can I connect a custom domain to my Lovable project?
+### 3. Run in development
 
-Yes, you can!
+```bash
+pnpm dev
+```
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+The app will be served at `http://localhost:5173`.
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+### 4. Test
+
+```bash
+pnpm test
+```
+
+### 5. Build for production
+
+```bash
+pnpm build
+```
+
+Static files go to `dist/` (ready to deploy on Netlify, Vercel, Supabase Storage, etc.).
+
+---
+
+## 🗄️ Supabase Setup
+
+1. **Create a new project** at <https://app.supabase.com>.
+2. **Notes table** (`notes`):
+
+   | column      | type        | constraints                     |
+   | ----------- | ----------- | ------------------------------- |
+   | id          | uuid        | PK, default `gen_random_uuid()` |
+   | user_id     | uuid        | FK → auth.users.id              |
+   | title       | text        | not null                        |
+   | content     | text        | not null                        |
+   | updated_at  | timestamptz | default `now()`, index          |
+
+3. **Row‑Level Security**: enable and add policies so that users can only read/write their own rows.
+4. **Storage bucket** (optional) for image uploads.
+
+Full SQL migration scripts live in `supabase/migrations`.
+
+---
+
+## 🧪 Testing philosophy
+
+- **Unit:** Pure functions & utilities.
+- **Component:** Render and user‑interaction tests with Testing Library.
+- **E2E (roadmap):** Playwright to verify critical flows (login → create → share).
+
+Run the suite with `pnpm test` (watch mode by default).
+
+---
+
+## 🤝 Contributing
+
+1. Fork the repo & create a new branch: `git checkout -b feature/my‑feature`.
+2. Commit your changes following Conventional Commits.
+3. Push & open a Pull Request.
+4. All PRs run the CI pipeline (lint, type‑check, unit tests).
+
+Need help setting up Supabase locally? Open an issue and we’ll sort it out. 💬
+
+
+---
+
+## 📜 License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+---
+
+> Built with ❤️ by Valentina Samboni.
